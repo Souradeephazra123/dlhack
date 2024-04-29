@@ -7,7 +7,7 @@ const Header = ({ active, setActive }) => {
   const navArr = ["Home", "Inference", "Team", "Contact"];
   return (
     <div className=" flex justify-between items-center py-4 px-6 bg-black text-white">
-      <div className=" text-3xl ">Logo</div>
+      <div className=" text-3xl ">AI Innovation 3.0</div>
       <ul className=" flex gap-20 font-semibold text-xl">
         {navArr.map((item, idx) => (
           <li
