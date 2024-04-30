@@ -15,12 +15,24 @@ const Inference = () => {
     }
   };
 
+
+
   const [fill, setFill] = useState(false);
   const submitImage = async () => {
+    const formdata = new FormData();
+    const fileInput = document.getElementById("fileInput");
+    
+    formdata.append("img", fileInput.files[0]);
+
+    const requestOptions = {
+      method: "POST",
+      body: formdata,
+      redirect: "follow"
+    };
     try {
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/infer/segmentImage`,
-        { img: image }
+      const response = await fetch(
+        "http://172.16.40.241:5000/infer/segmentImage",
+        requestOptions
       );
       console.log("response from segment", response.data);
     } catch (error) {

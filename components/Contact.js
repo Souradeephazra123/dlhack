@@ -19,7 +19,7 @@ const Contact = () => {
         formData.append('img', selectedImage);
 
         try {
-            const response = await fetch('/segmentImage', {
+            const response = await fetch('http://172.16.40.241:5000/infer/segmentImage', {
                 method: 'POST',
                 body: formData
             });
