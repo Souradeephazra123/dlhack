@@ -14,27 +14,25 @@ const Inference = () => {
       reader.readAsDataURL(event.target.files[0]);
     }
   };
-
-
+  // const handleImageChange = (event) => {
+  //   if (event.target.files && event.target.files[0]) {
+  //     setImage(event.target.files[0]);
+  //   }
+  // };
 
   const [fill, setFill] = useState(false);
+  const [data, setData] = useState("");
   const submitImage = async () => {
-    const formdata = new FormData();
-    const fileInput = document.getElementById("fileInput");
-    
-    formdata.append("img", fileInput.files[0]);
-
-    const requestOptions = {
-      method: "POST",
-      body: formdata,
-      redirect: "follow"
-    };
     try {
-      const response = await fetch(
-        "http://172.16.40.241:5000/infer/segmentImage",
-        requestOptions
+      const formData = new FormData();
+      formData.append("img", image);
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/infer/segmentImage`,
+        formData,
+        { headers: { "Content-Type": "multipart/form-data" } }
       );
       console.log("response from segment", response.data);
+      setData(response.data);
     } catch (error) {
       console.log("error", error.message);
     }
@@ -42,42 +40,54 @@ const Inference = () => {
 
   return (
     <div className=" w-full flex">
-      <div className=" w-1/2 p-4 rounded 2xl:rounded-xl bg-black flex  flex-col gap-10 justify-center items-center">
+      <div className="relative w-1/2 max-h-[300px] p-4 rounded 2xl:rounded-xl bg-black flex  flex-col gap-10 justify-center items-center">
+        {image && (
+          <Image
+            src={image}
+            width={80}
+            height={80}
+            alt="profile_image"
+            onClick={() => setFill(!fill)}
+            className={` w-full h-full ${
+              fill === true ? "object-fill" : "object-contain"
+            }  border-white border `}
+          />
+        )}
+        <div className="absolute left-1/2 transform -translate-x-1/2 top-1/2 -translate-y-1/2 flex flex-col gap-3 justify-center items-center">
+          <div>
+            <input
+              type="file"
+              onChange={handleImageChange}
+              style={{ display: "none" }}
+              id="fileInput"
+            />
+            <label
+              htmlFor="fileInput"
+              className="bg-[#E9C638] text-sm 2xl:text-base text-black font-bold py-1 px-2 2xl:py-2 2xl:px-4 rounded-full w-fit"
+            >
+              Select Picture
+            </label>
+          </div>
+          <button
+            onClick={submitImage}
+            type="submit"
+            className=" text-black bg-white px-4 py-1 rounded-full w-fit"
+          >
+            Submit
+          </button>
+        </div>
+      </div>
+      <div className=" w-1/2 max-h-[300px] text-white flex justify-center items-center border-l border-[2px] bg-black text-center">
         <Image
-          src={image}
+          src={data}
           width={80}
           height={80}
           alt="profile_image"
           onClick={() => setFill(!fill)}
-          className={` w-[300px] 2xl:w-[400px] h-[200px] 2xl:h-[250px] ${
+          className={` w-full h-full ${
             fill === true ? "object-fill" : "object-contain"
-          }  border-white border`}
+          }  border-white border `}
         />
-
-        <div>
-          <input
-            type="file"
-            onChange={handleImageChange}
-            style={{ display: "none" }}
-            id="fileInput"
-          />
-          <label
-            htmlFor="fileInput"
-            className="bg-[#E9C638] text-sm 2xl:text-base text-black font-bold py-1 px-2 2xl:py-2 2xl:px-4 rounded-full w-fit"
-          >
-            Select Picture
-          </label>
-        </div>
-        <button
-          onClick={submitImage}
-          type="submit"
-          className=" text-black bg-white px-4 py-1 rounded-full"
-        >
-          Submit
-        </button>
-      </div>
-      <div className=" w-1/2 text-white flex justify-center items-center border-l border-[2px] bg-black text-center">
-        wait until image is processed
       </div>
     </div>
   );
